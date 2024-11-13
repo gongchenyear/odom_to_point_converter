@@ -1,38 +1,34 @@
-#include <rclcpp/rclcpp.hpp>
-#include <nav_msgs/msg/odometry.hpp>
-#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <ros/ros.h>
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PointStamped.h>
 
-class OdomToPoseNode : public rclcpp::Node
+class OdomToPointNode
 {
 public:
-    OdomToPoseNode() :
-        Node("odom_to_pose_node")
+    OdomToPointNode()
     {
-        odomSubscription = this->create_subscription<nav_msgs::msg::Odometry>("odom_in", 1000,
-                                                                              std::bind(&OdomToPoseNode::subscriptionCallback, this,
-                                                                                        std::placeholders::_1));
-        posePublisher = this->create_publisher<geometry_msgs::msg::PoseStamped>("pose_out", 1000);
+        odom_sub_ = nh_.subscribe("odom_in", 1000, &OdomToPointNode::odomCallback, this);
+        point_pub_ = nh_.advertise<geometry_msgs::PointStamped>("point_out", 1000);
+    }
+
+    void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
+    {
+        geometry_msgs::PointStamped point_msg;
+        point_msg.header = msg->header;
+        point_msg.point = msg->pose.pose.position;
+        point_pub_.publish(point_msg);
     }
 
 private:
-    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odomSubscription;
-    rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr posePublisher;
-
-    void subscriptionCallback(const nav_msgs::msg::Odometry& odometryMsg)
-    {
-        geometry_msgs::msg::PoseStamped poseStamped;
-        poseStamped.header.frame_id = odometryMsg.header.frame_id;
-        poseStamped.header.stamp = odometryMsg.header.stamp;
-        poseStamped.pose = odometryMsg.pose.pose;
-        posePublisher->publish(poseStamped);
-    }
-
+    ros::NodeHandle nh_;
+    ros::Subscriber odom_sub_;
+    ros::Publisher point_pub_;
 };
 
 int main(int argc, char** argv)
 {
-    rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<OdomToPoseNode>());
-    rclcpp::shutdown();
+    ros::init(argc, argv, "odom_to_point_node");
+    OdomToPointNode node;
+    ros::spin();
     return 0;
 }

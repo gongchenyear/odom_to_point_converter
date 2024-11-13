@@ -1,21 +1,24 @@
-cmake_minimum_required(VERSION 3.8)
-project(odom_to_pose_converter)
+cmake_minimum_required(VERSION 2.8.3)
+project(odom_to_point_converter)
 
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(nav_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  nav_msgs
+  geometry_msgs
+)
+
+catkin_package()
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
 
 add_executable(${PROJECT_NAME}_node src/main.cpp)
 
-ament_target_dependencies(${PROJECT_NAME}_node
-        rclcpp
-        nav_msgs
-        geometry_msgs
+target_link_libraries(${PROJECT_NAME}_node
+  ${catkin_LIBRARIES}
 )
 
 install(TARGETS ${PROJECT_NAME}_node
-        DESTINATION lib/${PROJECT_NAME}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
-ament_package()

@@ -1,18 +1,18 @@
-# odom_to_pose_converter
-A node for converting nav_msgs/Odometry messages to geometry_msgs/PoseStamped messages.
+# odom_to_point_converter
+A node for converting nav_msgs/Odometry messages to geometry_msgs/pointStamped messages.
 
 ```mermaid
 flowchart LR
 
-/odom_to_pose_converter_node[ /odom_to_pose_converter_node ]:::main
+/odom_to_point_converter_node[ /odom_to_point_converter_node ]:::main
 %% /wiln_node[ /wiln_node ]:::node
 /icp_odom([ /icp_odom<br>nav_msgs/msg/Odometry ]):::bugged
-/pose([ /pose<br>geometry_msgs/msg/PoseStamped ]):::topic
+/point([ /point<br>geometry_msgs/msg/pointStamped ]):::topic
 
 
-/icp_odom --> /odom_to_pose_converter_node
-%% /pose --> /wiln_node
-/odom_to_pose_converter_node --> /pose
+/icp_odom --> /odom_to_point_converter_node
+%% /point --> /wiln_node
+/odom_to_point_converter_node --> /point
 
 
 subgraph keys[<b>Keys<b/>]
