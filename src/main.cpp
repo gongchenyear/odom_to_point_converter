@@ -7,8 +7,8 @@ class OdomToPointNode
 public:
     OdomToPointNode()
     {
-        odom_sub_ = nh_.subscribe("odom_in", 1000, &OdomToPointNode::odomCallback, this);
-        point_pub_ = nh_.advertise<geometry_msgs::PointStamped>("point_out", 1000);
+        odom_sub_ = nh_.subscribe("odom", 1000, &OdomToPointNode::odomCallback, this);
+        point_pub_ = nh_.advertise<geometry_msgs::PointStamped>("pointstamped", 1000);
     }
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
